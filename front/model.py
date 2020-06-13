@@ -14,7 +14,7 @@ epochs = 10
 batch_size = 16
 
 if B.image_data_format() == 'channels_first':
-    input_shape = (3, width, img_height)
+    input_shape = (3, width, height)
 else:
     input_shape = (width, height, 3)
 
