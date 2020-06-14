@@ -12,6 +12,18 @@ from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import SubmitField
+import tensorflow as tf
+
+config = tf.ConfigProto(
+    device_count={'GPU': 1},
+    intra_op_parallelism_threads=1,
+    allow_soft_placement=True
+)
+
+config.gpu_options.allow_growth = True
+config.gpu_options.per_process_gpu_memory_fraction = 0.6
+
+session = tf.Session(config=config)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'any secret key'
@@ -29,21 +41,23 @@ class UploadForm(FlaskForm):
 
 
 def preprocess(img):
-    width, height = img.shape[0], img.shape[1]
-    img = image.array_to_img(img, scale=False)
+    with session.as_default():
+        with session.graph.as_default():
+            width, height = img.shape[0], img.shape[1]
+            img = image.array_to_img(img, scale=False)
 
-    desired_width, desired_height = 100, 100
+            desired_width, desired_height = 100, 150
 
-    if width < desired_width:
-        desired_width = width
-    start_x = np.maximum(0, int((width-desired_width)/2))
+            if width < desired_width:
+                desired_width = width
+            start_x = np.maximum(0, int((width-desired_width)/2))
 
-    img = img.crop((start_x, np.maximum(0, height-desired_height),
-                    start_x+desired_width, height))
-    img = img.resize((100, 100))
+            img = img.crop((start_x, np.maximum(0, height-desired_height),
+                            start_x+desired_width, height))
+            img = img.resize((150, 150))
 
-    img = image.img_to_array(img)
-    return img / 255.
+            img = image.img_to_array(img)
+            return img / 255.
 
 
 @app.route('/', methods=['GET', 'POST'])
