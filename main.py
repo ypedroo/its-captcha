@@ -23,8 +23,10 @@ bootstrap = Bootstrap(app)
 saved_model = load_model("models/train_data.h5")
 saved_model._make_predict_function()
 
-sess = tf.Session()
 graph = tf.get_default_graph()
+init = tf.global_variables_initializer()
+sess = tf.Session()
+
 
 
 class UploadForm(FlaskForm):
