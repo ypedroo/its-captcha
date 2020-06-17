@@ -1,19 +1,16 @@
-from flask import Flask, render_template, request
-from io import BytesIO
-from keras.preprocessing import image
-from keras.preprocessing.image import array_to_img, img_to_array
-from keras.models import load_model
-from tensorflow.python.keras.backend import set_session
-import os
-from PIL import Image
-import numpy as np
 from base64 import b64encode
+from io import BytesIO
 
+import numpy as np
+import tensorflow as tf
+from PIL import Image
+from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
 from wtforms import SubmitField
-import tensorflow as tf
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'any secret key'
@@ -23,10 +20,10 @@ bootstrap = Bootstrap(app)
 saved_model = load_model("models/train_data.h5")
 saved_model._make_predict_function()
 
-graph = tf.get_default_graph()
-init = tf.global_variables_initializer()
-sess = tf.Session()
+#graph = tf.get_default_graph()
+#sess = tf.Session()
 
+print(tf.__version__)
 
 
 class UploadForm(FlaskForm):
@@ -55,34 +52,36 @@ def preprocess(img):
 
 @app.route('/', methods=['GET', 'POST'])
 def predict():
-    global sess
-    global graph
-    with graph.as_default():
-        set_session(sess)
-        try:
-            form = UploadForm()
-            if form.validate_on_submit():
-                print(form.photo.data)
-                image_stream = form.photo.data.stream
-                original_img = Image.open(image_stream)
-                img = image.img_to_array(original_img)
-                img = preprocess(img)
-                img = np.expand_dims(img, axis=0)
-                prediction = saved_model.predict_classes(img)
+    #global sess
+    #global graph
+    #with graph.as_default():
+    #   sess.run(tf.global_variables_initializer())
+    #  try:
+    form = UploadForm()
+    if form.validate_on_submit():
+        print(form.photo.data)
+        image_stream = form.photo.data.stream
+        original_img = Image.open(image_stream)
+        img = image.img_to_array(original_img)
+        img = preprocess(img)
+        img = np.expand_dims(img, axis=0)
+        prediction = saved_model.predict_classes(img)
 
-                if (prediction[0][0] == 0):
-                    result = "DOG"
-                else:
-                    result = "NOT DOG"
+        if (prediction[0][0] == 0):
+            result = "DOG"
+            print(result)
+        else:
+            result = "NOT DOG"
+            print(result)
 
-                byteIO = BytesIO()
-                original_img.save(byteIO, format=original_img.format)
-                byteArr = byteIO.getvalue()
-                encoded = b64encode(byteArr)
+        byteIO = BytesIO()
+        original_img.save(byteIO, format=original_img.format)
+        byteArr = byteIO.getvalue()
+        encoded = b64encode(byteArr)
 
-                return render_template('result.html', result=result, encoded_photo=encoded.decode('ascii'))
-        except Exception as e:
-            print(e)
+        return render_template('result.html', result=result, encoded_photo=encoded.decode('ascii'))
+        #except Exception as e:
+         #   print(e)
     return render_template('index.html', form=form)
 
 
