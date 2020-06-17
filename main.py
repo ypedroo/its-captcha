@@ -56,17 +56,17 @@ def predict():
         img = np.expand_dims(img, axis=0)
         prediction = saved_model.predict_classes(img)
 
-        if (prediction[0][0] == 0):
+        if prediction[0][0] == 0:
             result = "DOG"
             print(result)
         else:
             result = "NOT DOG"
             print(result)
 
-        byteIO = BytesIO()
-        original_img.save(byteIO, format=original_img.format)
-        byteArr = byteIO.getvalue()
-        encoded = b64encode(byteArr)
+        byte_io = BytesIO()
+        original_img.save(byte_io, format=original_img.format)
+        byte_arr = byte_io.getvalue()
+        encoded = b64encode(byte_arr)
 
         return render_template('result.html', result=result, encoded_photo=encoded.decode('ascii'))
     return render_template('index.html', form=form)
