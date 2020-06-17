@@ -2,7 +2,6 @@ from base64 import b64encode
 from io import BytesIO
 
 import numpy as np
-import tensorflow as tf
 from PIL import Image
 from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
@@ -20,6 +19,7 @@ bootstrap = Bootstrap(app)
 saved_model = load_model("models/train_data.h5")
 saved_model._make_predict_function()
 
+
 class UploadForm(FlaskForm):
     photo = FileField('Upload an image', validators=[FileAllowed(
         ['jpg', 'png', 'jpeg'], u'Image only!'), FileRequired(u'File was empty!')])
@@ -34,10 +34,10 @@ def preprocess(img):
 
     if width < desired_width:
         desired_width = width
-    start_x = np.maximum(0, int((width-desired_width)/2))
+    start_x = np.maximum(0, int((width - desired_width) / 2))
 
-    img = img.crop((start_x, np.maximum(0, height-desired_height),
-                    start_x+desired_width, height))
+    img = img.crop((start_x, np.maximum(0, height - desired_height),
+                    start_x + desired_width, height))
     img = img.resize((150, 150))
 
     img = image.img_to_array(img)
