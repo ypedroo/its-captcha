@@ -20,12 +20,6 @@ bootstrap = Bootstrap(app)
 saved_model = load_model("models/train_data.h5")
 saved_model._make_predict_function()
 
-#graph = tf.get_default_graph()
-#sess = tf.Session()
-
-print(tf.__version__)
-
-
 class UploadForm(FlaskForm):
     photo = FileField('Upload an image', validators=[FileAllowed(
         ['jpg', 'png', 'jpeg'], u'Image only!'), FileRequired(u'File was empty!')])
@@ -52,11 +46,6 @@ def preprocess(img):
 
 @app.route('/', methods=['GET', 'POST'])
 def predict():
-    #global sess
-    #global graph
-    #with graph.as_default():
-    #   sess.run(tf.global_variables_initializer())
-    #  try:
     form = UploadForm()
     if form.validate_on_submit():
         print(form.photo.data)
@@ -80,8 +69,6 @@ def predict():
         encoded = b64encode(byteArr)
 
         return render_template('result.html', result=result, encoded_photo=encoded.decode('ascii'))
-        #except Exception as e:
-         #   print(e)
     return render_template('index.html', form=form)
 
 
