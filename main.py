@@ -58,13 +58,13 @@ def predict():
 
         if prediction[0] == 0:
             result = "CAT"
-            print(prediction)
+            print(prediction[0][0])
         elif prediction[0] == 1:
             result = "DOG"
-            print(prediction)
+            print(prediction[0][0])
         else:
             result = "NOT AN ANIMAL"
-            print(prediction)
+            print(prediction[0][0])
 
         byte_io = BytesIO()
         original_img.save(byte_io, format=original_img.format)
