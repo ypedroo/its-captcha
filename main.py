@@ -56,12 +56,15 @@ def predict():
         img = np.expand_dims(img, axis=0)
         prediction = saved_model.predict_classes(img)
 
-        if prediction[0][0] == 0:
+        if prediction[0] == 0:
+            result = "CAT"
+            print(prediction)
+        elif prediction[0] == 1:
             result = "DOG"
-            print(result)
+            print(prediction)
         else:
-            result = "NOT DOG"
-            print(result)
+            result = "NOT AN ANIMAL"
+            print(prediction)
 
         byte_io = BytesIO()
         original_img.save(byte_io, format=original_img.format)

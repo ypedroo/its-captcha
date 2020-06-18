@@ -1,10 +1,12 @@
 {% block content %}
 
 <div class="col-md-4 col-lg-offset-4">
-    {% if result == "DOG" %}
-    <h4 style="color:green;">The image uploaded has a cactus plant</h1>
-        {% elif result == "NOT DOG" %}
-        <h4 style="color:red;">The image uploaded does not have a cactus plant</h1>
+    {% if result == "CAT" %}
+    <h4 style="color:green;">This is a cat</h1>
+        {% elif result == "DOG" %}
+        <h4 style="color:green;">This is a dog</h1>
+            {% elif result == "NOT AN ANIMAL" %}
+            <h4 style="color:red;">Not an animal</h1>
             {% endif %}
 </div>
 
